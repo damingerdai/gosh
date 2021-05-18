@@ -46,6 +46,11 @@ func executeInput(input string) error {
 		return err
 	}
 
+	if args[0] == "exit" || args[0] == "exit:" {
+		os.Exit(0)
+		return nil
+	}
+
 	cmd := exec.Command(args[0], args[1:]...)
 
 	cmd.Stdin = os.Stdin
