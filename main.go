@@ -26,12 +26,23 @@ func main() {
 	}
 }
 
+func blue(str string) string {
+	return "\033[1;34m" + str + "\033[0m"
+}
+
+func yellowWithBlueBG(str string) string {
+	return "\033[1;33;44m" + str + "\033[0m"
+}
+
 func showPrompt() {
 	u, _ := user.Current()
 	host, _ := os.Hostname()
 	wd, _ := os.Getwd()
 
-	fmt.Printf("%s@%s %s > ", u.Username, host, wd)
+	userAndHost := blue(fmt.Sprintf("%s@%s", u.Username, host))
+	wd = yellowWithBlueBG(wd)
+
+	fmt.Printf("%s %s > ", userAndHost, wd)
 }
 
 func executeInput(input string) error {
