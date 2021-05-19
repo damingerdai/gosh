@@ -26,21 +26,10 @@ func main() {
 	}
 }
 
-func showPrompt() {
-	u, _ := user.Current()
-	host, _ := os.Hostname()
-	wd, _ := os.Getwd()
-
-	userAndHost := blue(fmt.Sprintf("%s@%s", u.Username, host))
-	wd = yellowWithBlueBG(wd)
-
-	fmt.Printf("%s %s > ", userAndHost, wd)
-}
-
 func executeInput(input string) error {
 	input = os.ExpandEnv(input)
 
-	args := strings.Split(input, " ")
+	args := parseArgs(input)
 
 	if args[0] == "export" {
 		kv := strings.Split(args[1], "=")
@@ -77,4 +66,15 @@ func executeInput(input string) error {
 	err := cmd.Run()
 
 	return err
+}
+
+func showPrompt() {
+	u, _ := user.Current()
+	host, _ := os.Hostname()
+	wd, _ := os.Getwd()
+
+	userAndHost := blue(fmt.Sprintf("%s@%s", u.Username, host))
+	wd = yellowWithBlueBG(wd)
+
+	fmt.Printf("%s %s > ", userAndHost, wd)
 }
