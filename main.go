@@ -42,6 +42,21 @@ func executeInput(input string) error {
 
 	args := strings.Split(input, " ")
 
+	if args[0] == "export" {
+		kv := strings.Split(args[1], "=")
+
+		key, val := kv[0], kv[1]
+
+		err := os.Setenv(key, val)
+		return err
+	}
+
+	if args[0] == "unset" {
+		err := os.Unsetenv(args[1])
+
+		return err
+	}
+
 	if args[0] == "cd" {
 		err := os.Chdir(args[1])
 
