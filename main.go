@@ -2,11 +2,9 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
-	"os/user"
 	"strings"
 )
 
@@ -27,9 +25,27 @@ func main() {
 }
 
 func executeInput(input string) error {
+	input = expandAlias(input)
 	input = os.ExpandEnv(input)
 
 	args := parseArgs(input)
+
+	if args[0] == "alias" {
+		kv := strings.Split(args[1], "=")
+
+		key, val := kv[0], strings.Trim(kv[1], "'")
+		setAlias(key, val)
+
+		return nil
+	}
+
+	if args[0] == "unalias" {
+		key := args[1]
+
+		unsetAlias(key)
+
+		return nil
+	}
 
 	if args[0] == "export" {
 		kv := strings.Split(args[1], "=")
@@ -66,15 +82,4 @@ func executeInput(input string) error {
 	err := cmd.Run()
 
 	return err
-}
-
-func showPrompt() {
-	u, _ := user.Current()
-	host, _ := os.Hostname()
-	wd, _ := os.Getwd()
-
-	userAndHost := blue(fmt.Sprintf("%s@%s", u.Username, host))
-	wd = yellowWithBlueBG(wd)
-
-	fmt.Printf("%s %s > ", userAndHost, wd)
 }
