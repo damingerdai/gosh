@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -9,6 +11,8 @@ import (
 )
 
 func main() {
+	initialize()
+
 	stdin := bufio.NewReader(os.Stdin)
 
 	for {
@@ -95,4 +99,28 @@ func executeInput(input string) error {
 	err := cmd.Run()
 
 	return err
+}
+
+func initialize() {
+	homeDir, _ := os.UserHomeDir()
+
+	file, err := os.Open(fmt.Sprintf("%s/.goshrc", homeDir))
+
+	if err != nil {
+		return
+	}
+
+	goshrcReader := bufio.NewReader(file)
+
+	for {
+		input, err := goshrcReader.ReadString('\n')
+
+		if err == io.EOF {
+			return
+		}
+
+		input = strings.TrimSpace(input)
+
+		executeInput(input)
+	}
 }
