@@ -38,6 +38,8 @@ func showPrompt() {
 }
 
 func executeInput(input string) error {
+	input = os.ExpandEnv(input)
+
 	args := strings.Split(input, " ")
 
 	if args[0] == "cd" {
