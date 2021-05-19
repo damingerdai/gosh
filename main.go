@@ -35,6 +35,13 @@ func executeInput(input string) error {
 
 	args := parseArgs(input)
 
+	if args[0] == "which" {
+		for _, cmd := range args[1:] {
+			lookCmmand(cmd)
+		}
+		return nil
+	}
+
 	if args[0] == "alias" {
 		kv := strings.Split(args[1], "=")
 
