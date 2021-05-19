@@ -25,7 +25,12 @@ func main() {
 }
 
 func executeInput(input string) error {
-	input = expandAlias(input)
+	if strings.HasPrefix(input, `\`) {
+		input = input[1:]
+	} else {
+		input = expandAlias(input)
+	}
+
 	input = os.ExpandEnv(input)
 
 	args := parseArgs(input)
