@@ -31,9 +31,10 @@ func executeInput(input string) error {
 		input = expandAlias(input)
 	}
 
+	input = expandWildcardInCmd(input)
 	input = os.ExpandEnv(input)
 
-	args := parseArgs(input)
+	args := parseArgs(strings.Trim(input, " "))
 
 	if args[0] == "which" {
 		for _, cmd := range args[1:] {
