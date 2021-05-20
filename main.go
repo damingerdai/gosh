@@ -7,13 +7,28 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
+	"syscall"
 )
 
 func main() {
 	initialize()
 
+	signalCh := make(chan os.Signal)
+
+	signal.Notify(signalCh, syscall.SIGINT)
+
 	stdin := bufio.NewReader(os.Stdin)
+
+	handleSignals := func() {
+		for {
+			sig := <-signalCh
+
+			fmt.Println("Received signal:", sig)
+		}
+	}
+	go handleSignals()
 
 	for {
 		showPrompt()
