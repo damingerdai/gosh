@@ -38,7 +38,24 @@ func executeInput(input string) error {
 	input = expandWildcardInCmd(input)
 	input = os.ExpandEnv(input)
 
+	inputStream := os.Stdin
+
 	args := parseArgs(strings.Trim(input, " "))
+
+	if len(args) > 2 && args[len(args)-2] == "<" {
+		filename := args[len(args)-1]
+
+		file, err := os.Open(filename)
+
+		if err != nil {
+			return err
+		}
+
+		inputStream = file
+
+		args = args[:len(args)-2]
+
+	}
 
 	if args[0] == "which" {
 		for _, cmd := range args[1:] {
@@ -92,7 +109,7 @@ func executeInput(input string) error {
 
 	cmd := exec.Command(args[0], args[1:]...)
 
-	cmd.Stdin = os.Stdin
+	cmd.Stdin = inputStream
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
