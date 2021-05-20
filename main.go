@@ -61,9 +61,17 @@ func executeInput(input string) error {
 	input = expandWildcardInCmd(input)
 	input = os.ExpandEnv(input)
 
+	shouldRunInBackground := false
+
 	inputStream := os.Stdin
 
 	args := parseArgs(strings.Trim(input, " "))
+
+	if args[len(args)-1] == "&" {
+		shouldRunInBackground = true
+		inputStream = nil
+		args = args[:len(args)-1]
+	}
 
 	if len(args) > 2 && args[len(args)-2] == "<" {
 		filename := args[len(args)-1]
@@ -136,8 +144,12 @@ func executeInput(input string) error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	currentCmd = cmd
+	if shouldRunInBackground {
+		err := cmd.Start()
+		return err
+	}
 
+	currentCmd = cmd
 	err := cmd.Run()
 
 	currentCmd = nil
