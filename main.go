@@ -12,6 +12,8 @@ import (
 	"syscall"
 )
 
+var currentCmd *exec.Cmd
+
 func main() {
 	initialize()
 
@@ -25,7 +27,13 @@ func main() {
 		for {
 			sig := <-signalCh
 
-			fmt.Println("Received signal:", sig)
+			if currentCmd != nil {
+				currentCmd.Process.Signal(sig)
+			} else {
+				fmt.Println()
+				showPrompt()
+			}
+
 		}
 	}
 	go handleSignals()
@@ -128,7 +136,11 @@ func executeInput(input string) error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
+	currentCmd = cmd
+
 	err := cmd.Run()
+
+	currentCmd = nil
 
 	return err
 }
