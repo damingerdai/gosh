@@ -1,0 +1,35 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+# gazelle:prefix github.com/damingerdai/gosh
+gazelle(name = "gazelle")
+
+go_library(
+    name = "gosh_lib",
+    srcs = [
+        "alias.go",
+        "colors.go",
+        "main.go",
+        "parseArgs.go",
+        "prompt.go",
+        "which.go",
+        "wildcard.go",
+    ],
+    importpath = "github.com/damingerdai/gosh",
+    visibility = ["//visibility:private"],
+)
+
+go_binary(
+    name = "gosh",
+    embed = [":gosh_lib"],
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "gosh_test",
+    srcs = [
+        "alias_test.go",
+        "parseArgs_test.go",
+    ],
+    embed = [":gosh_lib"],
+)
