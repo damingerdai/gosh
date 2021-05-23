@@ -12,5 +12,5 @@ bazel run //:gazelle
 ## build
 
 ```
-
+bazel build //:gosh
 ```
