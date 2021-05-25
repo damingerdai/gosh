@@ -1,0 +1,31 @@
+name: Gosh CI
+
+on:
+  push:
+    branches: [master, bazel-action]
+  pull_request:
+    branches: [master]
+
+# https://github.com/formatjs/formatjs/blob/main/.github/workflows/tests-pr.yml
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+        with:
+          submodules: true
+          fetch-depth: 110
+      - name: build on ${{ matrix.os }}
+        run: |
+          bazel build //:gosh
+        env:
+          CI: true
+#      - name: test
+#        run: |
+#          bazel test //... --build_metadata=COMMIT_SHA=$(git rev-parse HEAD)
+#        env:
+#          CI: true
